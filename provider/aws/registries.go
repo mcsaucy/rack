@@ -75,7 +75,7 @@ func (p *Provider) RegistryAdd(server, username, password string) (*structs.Regi
 		return nil, log.Error(err)
 	}
 
-	id := fmt.Sprintf("%x", sha256.New().Sum([]byte(server)))
+	id := fmt.Sprintf("%x", sha256.Sum256([]byte(server)))
 
 	if err := p.SettingPut(fmt.Sprintf("system/registries/%s", id), string(data)); err != nil {
 		return nil, log.Error(err)
@@ -93,7 +93,7 @@ func (p *Provider) RegistryAdd(server, username, password string) (*structs.Regi
 func (p *Provider) RegistryRemove(server string) error {
 	log := Logger.At("RegistryRemove").Namespace("server=%q", server).Start()
 
-	key := fmt.Sprintf("system/registries/%x", sha256.New().Sum([]byte(server)))
+	key := fmt.Sprintf("system/registries/%x", sha256.Sum256([]byte(server)))
 
 	if _, err := p.SettingExists(key); err != nil {
 		return log.Error(errorNotFound(fmt.Sprintf("registry not found: %s", server)))
